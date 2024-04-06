@@ -59,6 +59,18 @@ function triggerAlarm() {
 }
 
 function flashTabTitle() {
+    let titleChanged = false;
+    const originalTitle = document.title;
+
+    const flashInterval = setInterval(() => {
+        document.title = titleChanged ? originalTitle : 'Alert!';
+        titleChanged = !titleChanged;
+    }, 1000); // Change title every second (1000 milliseconds)
+
+    setTimeout(() => {
+        clearInterval(flashInterval);
+        document.title = originalTitle; // Restore original title after flashing
+    }, 10000); // Flash for 10 seconds (10 * 1000 = 10000 milliseconds)
 
 }
 
