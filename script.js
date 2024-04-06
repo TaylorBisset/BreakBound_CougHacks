@@ -84,6 +84,9 @@ document.getElementById("pauseButton").addEventListener("click", pauseTimer);
 document.getElementById("resumeButton").addEventListener("click", resumeTimer);
 document.getElementById("resetButton").addEventListener("click", resetTimer);
 
+// Initial display
+updateDisplay();
+
 // FOOTER 
 document.addEventListener("DOMContentLoaded", function() {
     // Get the footer container
@@ -96,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const currentYear = new Date().getFullYear();
 
     // Set the copyright text
-    copyrightText.textContent = `© ${currentYear} BreakBound\nby Taylor Bisset`;
+    copyrightText.textContent = `© ${currentYear} BreakBound by Taylor Bisset`;
 
     // Append the copyright text to the footer container
     footerContainer.appendChild(copyrightText);
