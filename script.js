@@ -38,7 +38,7 @@ function startTimer() {
         timerInterval = setInterval(updateRestTimer, 1000);
     } else if (!running && isBreaking) {
         startTime = Date.now() - (breakTime - elapsedTime) * 1000; // Adjusting start time for unpausing
-        timerInterval = setInterval(updateLongBreakTimer, 1000);
+        timerInterval = setInterval(updateBreakTimer, 1000);
     }
 }
 
@@ -120,7 +120,7 @@ function updateRestTimer() {
     }
 }
 
-function updateLongBreakTimer() {
+function updateBreakTimer() {
     const currentTime = Date.now();
     elapsedTime = Math.floor((currentTime - startTime) / 1000);
     timerDisplay.textContent = formatTime(elapsedTime);
@@ -159,7 +159,7 @@ function startBreak() {
     restMessage.classList.remove('hidden');
     startButton.textContent = 'Take a Break';
     startTime = Date.now();
-    timerInterval = setInterval(updateLongBreakTimer, 1000);
+    timerInterval = setInterval(updateBreakTimer, 1000);
 }
 
 function stopBreak() {
@@ -190,6 +190,41 @@ pauseButton.addEventListener('click', () => {
 });
 
 resetButton.addEventListener('click', resetTimer);
+
+/* Total Timers logic */
+
+// Global variables for total times
+let totalWorkSeconds = 0;
+let totalRestSeconds = 0;
+let totalBreakSeconds = 0;
+
+// Function to update and display the total count-up timer
+function updateTotalTimer() {
+    if (isTimerRunning && isWorking) {
+        totalWorkSeconds++;
+    }
+    if (isTimerRunning && !isWorking && isResting) {
+        totalRestSeconds++;
+    }
+    if (isTimerRunning && !isWorking && !isResting && isOnBreak) {
+        totalBreakSeconds++;
+    }
+
+    const totalTimerDisplay = document.getElementById("totalTimerDisplay");
+    totalTimerDisplay.textContent = `Total Work: ${formatTime(totalWorkSeconds)} | Total Rest: ${formatTime(totalRestSeconds)} | Total Break: ${formatTime(totalBreakSeconds)}`;
+}
+
+// Initialize the total timer display
+function initializeTotalTimer() {
+    const totalTimerDisplay = document.getElementById("totalTimerDisplay");
+    totalTimerDisplay.textContent = `Total Work: ${formatTime(totalWorkSeconds)} | Total Rest: ${formatTime(totalRestSeconds)} | Total Break: ${formatTime(totalBreakSeconds)}`;
+}
+
+// Call initializeTotalTimer to set up the initial display
+initializeTotalTimer();
+
+// Update the total timer every second
+setInterval(updateTotalTimer, 1000);
 
 document.addEventListener("DOMContentLoaded", function() {
     const footerContainer = document.getElementById("footerContainer");
