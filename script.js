@@ -7,9 +7,9 @@ const resetButton = document.getElementById('resetButton');
 const restMessage = document.getElementById('restMessage');
 const statusMessage = document.getElementById('statusMessage');
 const alarmSound = document.getElementById('alarmSound');
+const totalTimerDisplay = document.getElementById("totalTimerDisplay");
 
-// Define the times for work, rest, and long break
-const workTime = .20 * 60;   // 20 minutes for work
+const workTime = .1 * 60;   // 20 minutes for work
 const restTime = 20;        // 20 seconds for rest
 const breakTime = 10 * 60;  // 10 minutes for long break
 
@@ -19,6 +19,10 @@ let elapsedTime = 0;
 let running = false;
 let isResting = false;
 let isBreaking = false;
+let totalWorkSeconds = 0;
+let totalRestSeconds = 0;
+let totalBreakSeconds = 0;
+let lastTimestamp = null;
 
 function formatTime(timeInSeconds) {
     const hours = Math.floor(timeInSeconds / 3600);
@@ -29,15 +33,15 @@ function formatTime(timeInSeconds) {
 
 function startTimer() {
     if (!running && !isResting && !isBreaking) {
-        startTime = Date.now() - elapsedTime * 1000; // Adjusting start time for unpausing
+        startTime = Date.now() - elapsedTime * 1000;
         timerInterval = setInterval(updateTimer, 1000);
         running = true;
         statusMessage.textContent = 'Work Time';
     } else if (!running && isResting) {
-        startTime = Date.now() - (restTime - elapsedTime) * 1000; // Adjusting start time for unpausing
+        startTime = Date.now() - (restTime - elapsedTime) * 1000;
         timerInterval = setInterval(updateRestTimer, 1000);
     } else if (!running && isBreaking) {
-        startTime = Date.now() - (breakTime - elapsedTime) * 1000; // Adjusting start time for unpausing
+        startTime = Date.now() - (breakTime - elapsedTime) * 1000;
         timerInterval = setInterval(updateBreakTimer, 1000);
     }
 }
@@ -57,8 +61,6 @@ function resetTimer() {
 }
 
 function updateTimer() {
-    console.log('Updating timer...');
-
     const currentTime = Date.now();
     elapsedTime = Math.floor((currentTime - startTime) / 1000);
     timerDisplay.textContent = formatTime(elapsedTime);
@@ -80,31 +82,25 @@ function updateTimer() {
         cycleType = 'Break Time';
     }
 
-    console.log(`Remaining time: ${remainingTime}`);
-    console.log(`Cycle type: ${cycleType}`);
-
     statusMessage.textContent = `${cycleType} (${formatTime(remainingTime)})`;
 
     if (remainingTime <= 1) {
-        // Play the alarm sound
         setTimeout(() => {
-            // Play the alarm sound
-            console.log('Timer reached zero. Playing alarm sound.');
             alarmSound.play();
 
-            // Flash the tab by changing the title
             const originalTitle = document.title;
             let flashInterval = setInterval(() => {
                 document.title = (document.title === originalTitle) ? 'Time\'s Up!' : originalTitle;
             }, 1000);
 
-            // Reset the title and clear the flash interval after 5 seconds
             setTimeout(() => {
                 clearInterval(flashInterval);
                 document.title = originalTitle;
             }, 5000);
-        }, 500); // 0.5 second delay
+        }, 500);
     }
+
+    updateTotalTime(); // Update the total time
 }
 
 function updateRestTimer() {
@@ -118,6 +114,8 @@ function updateRestTimer() {
     if (elapsedTime >= restTime) {
         stopRest();
     }
+
+    updateTotalTime(); // Update the total time
 }
 
 function updateBreakTimer() {
@@ -131,6 +129,20 @@ function updateBreakTimer() {
     if (elapsedTime >= breakTime) {
         stopBreak();
     }
+
+    updateTotalTime(); // Update the total time
+}
+
+function updateTotalTime() {
+    if (running && !isResting && !isBreaking) {
+        totalWorkSeconds++;
+    } else if (!running && isResting) {
+        totalRestSeconds++;
+    } else if (!running && isBreaking) {
+        totalBreakSeconds++;
+    }
+
+    totalTimerDisplay.textContent = `Total Work: ${formatTime(totalWorkSeconds)} | Total Rest: ${formatTime(totalRestSeconds)} | Total Break: ${formatTime(totalBreakSeconds)}`;
 }
 
 function startRest() {
@@ -185,46 +197,18 @@ startButton.addEventListener('click', () => {
 pauseButton.addEventListener('click', () => {
     if (running && !isResting && !isBreaking) {
         pauseTimer();
-        pauseButton.textContent = 'Resume'; // Change button text to reflect functionality
+        pauseButton.textContent = 'Resume'; 
     }
 });
 
 resetButton.addEventListener('click', resetTimer);
 
-/* Total Timers logic */
-
-// Global variables for total times
-let totalWorkSeconds = 0;
-let totalRestSeconds = 0;
-let totalBreakSeconds = 0;
-
-// Function to update and display the total count-up timer
-function updateTotalTimer() {
-    if (isTimerRunning && isWorking) {
-        totalWorkSeconds++;
-    }
-    if (isTimerRunning && !isWorking && isResting) {
-        totalRestSeconds++;
-    }
-    if (isTimerRunning && !isWorking && !isResting && isOnBreak) {
-        totalBreakSeconds++;
-    }
-
-    const totalTimerDisplay = document.getElementById("totalTimerDisplay");
-    totalTimerDisplay.textContent = `Total Work: ${formatTime(totalWorkSeconds)} | Total Rest: ${formatTime(totalRestSeconds)} | Total Break: ${formatTime(totalBreakSeconds)}`;
-}
-
-// Initialize the total timer display
 function initializeTotalTimer() {
-    const totalTimerDisplay = document.getElementById("totalTimerDisplay");
     totalTimerDisplay.textContent = `Total Work: ${formatTime(totalWorkSeconds)} | Total Rest: ${formatTime(totalRestSeconds)} | Total Break: ${formatTime(totalBreakSeconds)}`;
+    requestAnimationFrame(updateTotalTimer);
 }
 
-// Call initializeTotalTimer to set up the initial display
 initializeTotalTimer();
-
-// Update the total timer every second
-setInterval(updateTotalTimer, 1000);
 
 document.addEventListener("DOMContentLoaded", function() {
     const footerContainer = document.getElementById("footerContainer");
