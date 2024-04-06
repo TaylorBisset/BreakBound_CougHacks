@@ -7,12 +7,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BreakBound | The Restful App</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
 
     <header>
-        <!-- Header -->
+        <div>
+            <h1>BreakBound</h1><br>
+            <h2>The Restful App</h2>
+        </div>
     </header>
     
     <nav>
@@ -20,11 +24,22 @@
     </nav>
     
     <main>
-        <!-- Main -->
+        <div class="timer">
+
+            <div id="timerDisplay">00:00:00</div>
+            
+            <div class="buttons">
+                <button onclick="startTimer()">Start</button>
+                <button onclick="pauseTimer()">Pause</button>
+                <button onclick="resumeTimer()">Resume</button>
+                <button onclick="resetTimer()">Reset</button>
+            </div>
+
+        </div>
     </main>
     
     <footer>
-        <!-- Footer -->
+        <p>&copy; 2024 BreakBound. All rights reserved.</p>
     </footer>
     
     <!-- JavaScript files go here -->
