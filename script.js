@@ -33,10 +33,15 @@ function formatTime(seconds) {
     return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`; 
 }
 
+function startTimer() {
+    if (!isTimerRunning) {
+        isTimerRunning = true;
+        timerInterval = setInterval(updateTimer, 1000); // Update timer every second (1000ms)
+    }
+}
+
 /*
 
-minutesToSeconds
-startTimer 
 pauseTimer 
 resumeTimer 
 resetTimer 
