@@ -68,6 +68,11 @@ function resetTimer() {
     updateTimer(); // Update the timer display
 }
 
+function updateTimer() {
+    timeElapsed++;
+    updateDisplay();
+}
+
 /*
 
 resetTimer 
