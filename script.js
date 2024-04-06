@@ -78,6 +78,12 @@ function updateDisplay() {
     timerDisplay.textContent = formatTime(timeElapsed);
 }
 
+// EVENT LISTENERS (BUTTONS)
+document.getElementById("startButton").addEventListener("click", startTimer);
+document.getElementById("pauseButton").addEventListener("click", pauseTimer);
+document.getElementById("resumeButton").addEventListener("click", resumeTimer);
+document.getElementById("resetButton").addEventListener("click", resetTimer);
+
 // FOOTER 
 document.addEventListener("DOMContentLoaded", function() {
     // Get the footer container
