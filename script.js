@@ -101,7 +101,7 @@ function updateTimer() {
     }
 
     updateTotalTime(); // Update
-
+}
 
 function updateRestTimer() {
     const currentTime = Date.now();
