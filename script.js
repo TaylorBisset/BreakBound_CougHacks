@@ -39,3 +39,21 @@ function updateTimer() {
 // Event listeners for the start and stop buttons
 document.getElementById('startButton').addEventListener('click', startTimer);
 document.getElementById('stopButton').addEventListener('click', stopTimer);
+
+// FOOTER 
+document.addEventListener("DOMContentLoaded", function() {
+    // Get the footer container
+    const footerContainer = document.getElementById("footerContainer");
+
+    // Create a new paragraph element for the copyright text
+    const copyrightText = document.createElement("p");
+
+    // Get the current year
+    const currentYear = new Date().getFullYear();
+
+    // Set the copyright text
+    copyrightText.textContent = `© ${currentYear} BreakBound by Taylor Bisset`;
+
+    // Append the copyright text to the footer container
+    footerContainer.appendChild(copyrightText);
+});
