@@ -9,7 +9,7 @@ const statusMessage = document.getElementById('statusMessage');
 const alarmSound = document.getElementById('alarmSound');
 const totalTimerDisplay = document.getElementById("totalTimerDisplay");
 
-const workTime = .1 * 60;   // 20 minutes for work
+const workTime = 20 * 60;   // 20 minutes for work
 const restTime = 20;        // 20 seconds for rest
 const breakTime = 10 * 60;  // 10 minutes for long break
 
@@ -100,8 +100,8 @@ function updateTimer() {
         }, 500);
     }
 
-    updateTotalTime(); // Update the total time
-}
+    updateTotalTime(); // Update
+
 
 function updateRestTimer() {
     const currentTime = Date.now();
