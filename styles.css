@@ -44,3 +44,14 @@ body {
     transition-duration: 0.125s;
     transition-timing-function: ease-in-out;
 }
+
+#restMessage {
+    font-size: 1.5rem;
+    color: orangered;
+    font-weight: bold;
+    display: none; /* Hidden by default */
+}
+
+.hidden {
+    display: none; /* Utility class for hiding elements */
+}

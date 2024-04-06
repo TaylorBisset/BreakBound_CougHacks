@@ -47,7 +47,7 @@ function updateTimer() {
     elapsedTime = Math.floor((currentTime - startTime) / 1000);
     timerDisplay.textContent = formatTime(elapsedTime);
 
-    if (elapsedTime === 20 * 60) {  // 20 minutes
+    if (elapsedTime === .20 * 60) {  // 20 minutes
         triggerAlarm();
         flashTabTitle();
     }
@@ -72,6 +72,23 @@ function flashTabTitle() {
         document.title = originalTitle; // Restore original title after flashing
     }, 10000); // Flash for 10 seconds (10 * 1000 = 10000 milliseconds)
 
+}
+
+function startRest() {
+    onBreak = true;
+    timerDisplay.textContent = '00:00:00'; // Reset timer display during break
+    document.getElementById('restMessage').classList.remove('hidden'); // Show rest message
+    breakSound.play(); // Play the break sound
+    startButton.textContent = 'Rest Your Eyes';
+    pauseButton.disabled = true;
+}
+
+function stopRest() {
+    onBreak = false;
+    breakTimeElapsed = 0;
+    timerDisplay.textContent = formatTime(elapsedTime); // Display timer again
+    document.getElementById('restMessage').classList.add('hidden'); // Hide break message
+    pauseButton.disabled = false;
 }
 
 startButton.addEventListener('click', startTimer);
