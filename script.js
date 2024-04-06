@@ -113,9 +113,8 @@ function updateRestTimer() {
 
     if (elapsedTime >= restTime) {
         stopRest();
+        updateTotalTime(); // Update total time when rest timer completes
     }
-
-    updateTotalTime(); // Update the total time
 }
 
 function updateBreakTimer() {
@@ -134,19 +133,27 @@ function updateBreakTimer() {
 }
 
 function updateTotalTime() {
+    const currentTime = Date.now();
+    const elapsedSeconds = Math.floor((currentTime - startTime) / 1000);
+
     if (running && !isResting && !isBreaking) {
-        totalWorkSeconds++;
+        totalWorkSeconds = elapsedSeconds;
     } else if (!running && isResting) {
-        totalRestSeconds++;
+        totalRestSeconds = elapsedSeconds;
     } else if (!running && isBreaking) {
-        totalBreakSeconds++;
+        totalBreakSeconds = elapsedSeconds;
     }
 
-    totalTimerDisplay.textContent = `Total Work: ${formatTime(totalWorkSeconds)} | Total Rest: ${formatTime(totalRestSeconds)} | Total Break: ${formatTime(totalBreakSeconds)}`;
+    const totalWorkFormatted = formatTime(totalWorkSeconds);
+    const totalRestFormatted = formatTime(totalRestSeconds);
+    const totalBreakFormatted = formatTime(totalBreakSeconds);
+
+    totalTimerDisplay.textContent = `Total Work: ${totalWorkFormatted} | Total Rest: ${totalRestFormatted} | Total Break: ${totalBreakFormatted}`;
 }
 
 function startRest() {
     isResting = true;
+    isBreaking = false; // Ensure break timer is not active
     pauseButton.disabled = true;
     restMessage.classList.remove('hidden');
     startButton.textContent = 'Rest Your Eyes';
@@ -166,6 +173,7 @@ function stopRest() {
 
 function startBreak() {
     isBreaking = true;
+    isResting = false; // Ensure rest timer is not active
     pauseButton.disabled = true;
     restMessage.textContent = 'Time to take a longer break!';
     restMessage.classList.remove('hidden');
