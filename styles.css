@@ -1,3 +1,5 @@
+/* styles.css BreakBound */
+
 body {
     display: flex;
     flex-direction: column;
@@ -16,6 +18,13 @@ body {
 #timerDisplay {
     font-size: 4rem;
     margin-bottom: 10px;
+}
+
+#statusMessage {
+    font-size: 1.2rem;
+    margin-top: 10px;
+    color: dodgerblue;
+    font-weight: bold;
 }
 
 .buttons button {
@@ -43,13 +52,6 @@ body {
     transform: scale(1.125);
     transition-duration: 0.125s;
     transition-timing-function: ease-in-out;
-}
-
-#restMessage {
-    font-size: 1.5rem;
-    color: orangered;
-    font-weight: bold;
-    display: none; /* Hidden by default */
 }
 
 .hidden {

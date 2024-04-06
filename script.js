@@ -4,11 +4,20 @@ const timerDisplay = document.getElementById('timerDisplay');
 const startButton = document.getElementById('startButton');
 const pauseButton = document.getElementById('pauseButton');
 const resetButton = document.getElementById('resetButton');
+const restMessage = document.getElementById('restMessage');
+const statusMessage = document.getElementById('statusMessage');
+
+// Define the times for work, rest, and long break
+const workTime = .20 * 60; // 20 minutes for work
+const restTime = 20; // 20 seconds for rest
+const longBreakTime = 10 * 60; // 10 minutes for long break
 
 let timerInterval;
 let startTime;
 let elapsedTime = 0;
 let running = false;
+let isResting = false;
+let isBreaking = false;
 
 function formatTime(timeInSeconds) {
     const hours = Math.floor(timeInSeconds / 3600);
@@ -18,14 +27,17 @@ function formatTime(timeInSeconds) {
 }
 
 function startTimer() {
-    if (!running) {
-        if (elapsedTime === 0) {
-            startTime = Date.now();
-        } else {
-            startTime = Date.now() - elapsedTime * 1000; // Adjusting start time for unpausing
-        }
+    if (!running && !isResting && !isBreaking) {
+        startTime = Date.now() - elapsedTime * 1000; // Adjusting start time for unpausing
         timerInterval = setInterval(updateTimer, 1000);
         running = true;
+        statusMessage.textContent = 'Work Time';
+    } else if (!running && isResting) {
+        startTime = Date.now() - (restTime - elapsedTime) * 1000; // Adjusting start time for unpausing
+        timerInterval = setInterval(updateRestTimer, 1000);
+    } else if (!running && isBreaking) {
+        startTime = Date.now() - (longBreakTime - elapsedTime) * 1000; // Adjusting start time for unpausing
+        timerInterval = setInterval(updateLongBreakTimer, 1000);
     }
 }
 
@@ -40,6 +52,7 @@ function resetTimer() {
     pauseTimer();
     elapsedTime = 0;
     timerDisplay.textContent = formatTime(elapsedTime);
+    statusMessage.textContent = '';
 }
 
 function updateTimer() {
@@ -47,76 +60,114 @@ function updateTimer() {
     elapsedTime = Math.floor((currentTime - startTime) / 1000);
     timerDisplay.textContent = formatTime(elapsedTime);
 
-    if (elapsedTime === .20 * 60) {  // 20 minutes
-        triggerAlarm();
-        flashTabTitle();
+    let remainingTime = 0;
+    let cycleType = '';
+
+    if (elapsedTime < workTime) {
+        remainingTime = workTime - elapsedTime;
+        cycleType = 'Work Time';
+    } else if (elapsedTime < workTime + restTime) {
+        remainingTime = workTime + restTime - elapsedTime;
+        cycleType = 'Rest Time';
+    } else if (elapsedTime < workTime + restTime + workTime) {
+        remainingTime = workTime + restTime + workTime - elapsedTime;
+        cycleType = 'Work Time';
+    } else {
+        remainingTime = workTime + restTime + workTime + longBreakTime - elapsedTime;
+        cycleType = 'Long Break';
+    }
+
+    statusMessage.textContent = `${cycleType} (${formatTime(remainingTime)})`;
+}
+
+function updateRestTimer() {
+    const currentTime = Date.now();
+    elapsedTime = Math.floor((currentTime - startTime) / 1000);
+    timerDisplay.textContent = formatTime(elapsedTime);
+
+    let remainingTime = restTime - elapsedTime;
+    statusMessage.textContent = `Rest Time (${formatTime(remainingTime)})`;
+
+    if (elapsedTime >= restTime) {
+        stopRest();
     }
 }
 
-function triggerAlarm() {
-    const alarmSound = new Audio('/TimerAlert.mp3'); 
-    alarmSound.play();
-}
+function updateLongBreakTimer() {
+    const currentTime = Date.now();
+    elapsedTime = Math.floor((currentTime - startTime) / 1000);
+    timerDisplay.textContent = formatTime(elapsedTime);
 
-function flashTabTitle() {
-    let titleChanged = false;
-    const originalTitle = document.title;
+    let remainingTime = longBreakTime - elapsedTime;
+    statusMessage.textContent = `Long Break (${formatTime(remainingTime)})`;
 
-    const flashInterval = setInterval(() => {
-        document.title = titleChanged ? originalTitle : 'Alert!';
-        titleChanged = !titleChanged;
-    }, 1000); // Change title every second (1000 milliseconds)
-
-    setTimeout(() => {
-        clearInterval(flashInterval);
-        document.title = originalTitle; // Restore original title after flashing
-    }, 10000); // Flash for 10 seconds (10 * 1000 = 10000 milliseconds)
-
+    if (elapsedTime >= longBreakTime) {
+        stopLongBreak();
+    }
 }
 
 function startRest() {
-    onBreak = true;
-    timerDisplay.textContent = '00:00:00'; // Reset timer display during break
-    document.getElementById('restMessage').classList.remove('hidden'); // Show rest message
-    breakSound.play(); // Play the break sound
-    startButton.textContent = 'Rest Your Eyes';
+    isResting = true;
     pauseButton.disabled = true;
+    restMessage.classList.remove('hidden');
+    startButton.textContent = 'Rest Your Eyes';
+    startTime = Date.now();
+    timerInterval = setInterval(updateRestTimer, 1000);
 }
 
 function stopRest() {
-    onBreak = false;
-    breakTimeElapsed = 0;
-    timerDisplay.textContent = formatTime(elapsedTime); // Display timer again
-    document.getElementById('restMessage').classList.add('hidden'); // Hide break message
+    isResting = false;
+    clearInterval(timerInterval);
+    elapsedTime = 0;
+    timerDisplay.textContent = formatTime(elapsedTime);
+    restMessage.classList.add('hidden');
+    startButton.textContent = 'Start';
     pauseButton.disabled = false;
 }
 
-startButton.addEventListener('click', startTimer);
-pauseButton.addEventListener('click', () => {
-    if (running) {
-        pauseTimer();
-        pauseButton.textContent = 'Resume'; // Change button text to reflect functionality
-    } else {
+function startLongBreak() {
+    isBreaking = true;
+    pauseButton.disabled = true;
+    restMessage.textContent = 'Time to take a longer break!';
+    restMessage.classList.remove('hidden');
+    startButton.textContent = 'Take a Break';
+    startTime = Date.now();
+    timerInterval = setInterval(updateLongBreakTimer, 1000);
+}
+
+function stopLongBreak() {
+    isBreaking = false;
+    clearInterval(timerInterval);
+    elapsedTime = 0;
+    timerDisplay.textContent = formatTime(elapsedTime);
+    restMessage.classList.add('hidden');
+    startButton.textContent = 'Start';
+    pauseButton.disabled = false;
+}
+
+startButton.addEventListener('click', () => {
+    if (!running && !isResting && !isBreaking) {
         startTimer();
-        pauseButton.textContent = 'Pause'; // Change button text to reflect functionality
+    } else if (!running && isResting) {
+        stopRest();
+    } else if (!running && isBreaking) {
+        stopLongBreak();
     }
 });
+
+pauseButton.addEventListener('click', () => {
+    if (running && !isResting && !isBreaking) {
+        pauseTimer();
+        pauseButton.textContent = 'Resume'; // Change button text to reflect functionality
+    }
+});
+
 resetButton.addEventListener('click', resetTimer);
 
-// FOOTER 
 document.addEventListener("DOMContentLoaded", function() {
-    // Get the footer container
     const footerContainer = document.getElementById("footerContainer");
-
-    // Create a new paragraph element for the copyright text
     const copyrightText = document.createElement("p");
-
-    // Get the current year
     const currentYear = new Date().getFullYear();
-
-    // Set the copyright text
     copyrightText.textContent = `© ${currentYear} BreakBound by Taylor Bisset`;
-
-    // Append the copyright text to the footer container
     footerContainer.appendChild(copyrightText);
 });
