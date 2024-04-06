@@ -74,7 +74,7 @@ function updateTimer() {
         cycleType = 'Work Time';
     } else {
         remainingTime = workTime + restTime + workTime + longBreakTime - elapsedTime;
-        cycleType = 'Long Break';
+        cycleType = 'Break Time';
     }
 
     statusMessage.textContent = `${cycleType} (${formatTime(remainingTime)})`;
@@ -99,7 +99,7 @@ function updateLongBreakTimer() {
     timerDisplay.textContent = formatTime(elapsedTime);
 
     let remainingTime = longBreakTime - elapsedTime;
-    statusMessage.textContent = `Long Break (${formatTime(remainingTime)})`;
+    statusMessage.textContent = `Break Time (${formatTime(remainingTime)})`;
 
     if (elapsedTime >= longBreakTime) {
         stopLongBreak();
