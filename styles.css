@@ -1,12 +1,10 @@
-/* styles.css BreakBound */ 
-
 body {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    color:aliceblue;
+    color: aliceblue;
     background-color: rgb(20, 20, 20);
 }
 
@@ -40,8 +38,8 @@ body {
 }
 
 .buttons button:active {
-    background-color: darkturquoise; 
-    color: black; 
+    background-color: darkturquoise;
+    color: black;
     transform: scale(1.125);
     transition-duration: 0.125s;
     transition-timing-function: ease-in-out;

@@ -2,7 +2,7 @@
 
 const timerDisplay = document.getElementById('timerDisplay');
 const startButton = document.getElementById('startButton');
-const stopButton = document.getElementById('stopButton');
+const pauseButton = document.getElementById('pauseButton');
 const resetButton = document.getElementById('resetButton');
 
 let timerInterval;
@@ -19,13 +19,17 @@ function formatTime(timeInSeconds) {
 
 function startTimer() {
     if (!running) {
-        startTime = Date.now() - elapsedTime;
+        if (elapsedTime === 0) {
+            startTime = Date.now();
+        } else {
+            startTime = Date.now() - elapsedTime * 1000; // Adjusting start time for unpausing
+        }
         timerInterval = setInterval(updateTimer, 1000);
         running = true;
     }
 }
 
-function stopTimer() {
+function pauseTimer() {
     if (running) {
         clearInterval(timerInterval);
         running = false;
@@ -33,7 +37,7 @@ function stopTimer() {
 }
 
 function resetTimer() {
-    stopTimer();
+    pauseTimer();
     elapsedTime = 0;
     timerDisplay.textContent = formatTime(elapsedTime);
 }
@@ -45,9 +49,16 @@ function updateTimer() {
 }
 
 startButton.addEventListener('click', startTimer);
-stopButton.addEventListener('click', stopTimer);
+pauseButton.addEventListener('click', () => {
+    if (running) {
+        pauseTimer();
+        pauseButton.textContent = 'Resume'; // Change button text to reflect functionality
+    } else {
+        startTimer();
+        pauseButton.textContent = 'Pause'; // Change button text to reflect functionality
+    }
+});
 resetButton.addEventListener('click', resetTimer);
-
 
 // FOOTER 
 document.addEventListener("DOMContentLoaded", function() {
