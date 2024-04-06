@@ -44,3 +44,21 @@ updateTimer
 formatTime 
 
 */
+
+// FOOTER 
+document.addEventListener("DOMContentLoaded", function() {
+    // Get the footer container
+    const footerContainer = document.getElementById("footerContainer");
+
+    // Create a new paragraph element for the copyright text
+    const copyrightText = document.createElement("p");
+
+    // Get the current year
+    const currentYear = new Date().getFullYear();
+
+    // Set the copyright text
+    copyrightText.textContent = `© ${currentYear} BreakBound\nby Taylor Bisset`;
+
+    // Append the copyright text to the footer container
+    footerContainer.appendChild(copyrightText);
+});
