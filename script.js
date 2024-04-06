@@ -40,9 +40,16 @@ function startTimer() {
     }
 }
 
+function pauseTimer() {
+    if (isTimerRunning && !isPaused) {
+        isPaused = true;
+        clearInterval(timerInterval);   // Pause the timer
+        pauseStartTime = Date.now();    // Record the pause start time
+    }
+}
+
 /*
 
-pauseTimer 
 resumeTimer 
 resetTimer 
 updateTimer 
