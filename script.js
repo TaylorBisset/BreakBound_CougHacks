@@ -73,13 +73,10 @@ function updateTimer() {
     updateDisplay();
 }
 
-/*
-
-resetTimer 
-updateTimer 
-formatTime 
-
-*/
+function updateDisplay() {
+    const timerDisplay = document.getElementById("timerDisplay");
+    timerDisplay.textContent = formatTime(timeElapsed);
+}
 
 // FOOTER 
 document.addEventListener("DOMContentLoaded", function() {
