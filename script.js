@@ -60,6 +60,14 @@ function resumeTimer() {
     }
 }
 
+function resetTimer() {
+    clearInterval(timerInterval);
+    isTimerRunning = false;
+    isPaused = false;
+    timeElapsed = 0;
+    updateTimer(); // Update the timer display
+}
+
 /*
 
 resetTimer 
