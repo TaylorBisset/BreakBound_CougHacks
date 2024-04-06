@@ -48,9 +48,20 @@ function pauseTimer() {
     }
 }
 
+function resumeTimer() {
+    if (isTimerRunning && isPaused) {
+        isPaused = false;
+        let pausedTime = (Date.now() - pauseStartTime) / 1000; // Calculate the time paused in seconds
+        timeElapsed -= pausedTime; // Subtract the paused time from the elapsed time
+        if (timeElapsed < 0) {
+            timeElapsed = 0; // Prevent negative time display
+        }
+        timerInterval = setInterval(updateTimer, 1000); // Resume the timer
+    }
+}
+
 /*
 
-resumeTimer 
 resetTimer 
 updateTimer 
 formatTime 
