@@ -6,11 +6,12 @@ const pauseButton = document.getElementById('pauseButton');
 const resetButton = document.getElementById('resetButton');
 const restMessage = document.getElementById('restMessage');
 const statusMessage = document.getElementById('statusMessage');
+const alarmSound = document.getElementById('alarmSound');
 
 // Define the times for work, rest, and long break
-const workTime = .20 * 60; // 20 minutes for work
-const restTime = 20; // 20 seconds for rest
-const longBreakTime = 10 * 60; // 10 minutes for long break
+const workTime = .20 * 60;   // 20 minutes for work
+const restTime = 20;        // 20 seconds for rest
+const breakTime = 10 * 60;  // 10 minutes for long break
 
 let timerInterval;
 let startTime;
@@ -36,7 +37,7 @@ function startTimer() {
         startTime = Date.now() - (restTime - elapsedTime) * 1000; // Adjusting start time for unpausing
         timerInterval = setInterval(updateRestTimer, 1000);
     } else if (!running && isBreaking) {
-        startTime = Date.now() - (longBreakTime - elapsedTime) * 1000; // Adjusting start time for unpausing
+        startTime = Date.now() - (breakTime - elapsedTime) * 1000; // Adjusting start time for unpausing
         timerInterval = setInterval(updateLongBreakTimer, 1000);
     }
 }
@@ -56,6 +57,8 @@ function resetTimer() {
 }
 
 function updateTimer() {
+    console.log('Updating timer...');
+
     const currentTime = Date.now();
     elapsedTime = Math.floor((currentTime - startTime) / 1000);
     timerDisplay.textContent = formatTime(elapsedTime);
@@ -73,11 +76,35 @@ function updateTimer() {
         remainingTime = workTime + restTime + workTime - elapsedTime;
         cycleType = 'Work Time';
     } else {
-        remainingTime = workTime + restTime + workTime + longBreakTime - elapsedTime;
+        remainingTime = workTime + restTime + workTime + breakTime - elapsedTime;
         cycleType = 'Break Time';
     }
 
+    console.log(`Remaining time: ${remainingTime}`);
+    console.log(`Cycle type: ${cycleType}`);
+
     statusMessage.textContent = `${cycleType} (${formatTime(remainingTime)})`;
+
+    if (remainingTime <= 1) {
+        // Play the alarm sound
+        setTimeout(() => {
+            // Play the alarm sound
+            console.log('Timer reached zero. Playing alarm sound.');
+            alarmSound.play();
+
+            // Flash the tab by changing the title
+            const originalTitle = document.title;
+            let flashInterval = setInterval(() => {
+                document.title = (document.title === originalTitle) ? 'Time\'s Up!' : originalTitle;
+            }, 1000);
+
+            // Reset the title and clear the flash interval after 5 seconds
+            setTimeout(() => {
+                clearInterval(flashInterval);
+                document.title = originalTitle;
+            }, 5000);
+        }, 500); // 0.5 second delay
+    }
 }
 
 function updateRestTimer() {
@@ -98,11 +125,11 @@ function updateLongBreakTimer() {
     elapsedTime = Math.floor((currentTime - startTime) / 1000);
     timerDisplay.textContent = formatTime(elapsedTime);
 
-    let remainingTime = longBreakTime - elapsedTime;
+    let remainingTime = breakTime - elapsedTime;
     statusMessage.textContent = `Break Time (${formatTime(remainingTime)})`;
 
-    if (elapsedTime >= longBreakTime) {
-        stopLongBreak();
+    if (elapsedTime >= breakTime) {
+        stopBreak();
     }
 }
 
@@ -125,7 +152,7 @@ function stopRest() {
     pauseButton.disabled = false;
 }
 
-function startLongBreak() {
+function startBreak() {
     isBreaking = true;
     pauseButton.disabled = true;
     restMessage.textContent = 'Time to take a longer break!';
@@ -135,7 +162,7 @@ function startLongBreak() {
     timerInterval = setInterval(updateLongBreakTimer, 1000);
 }
 
-function stopLongBreak() {
+function stopBreak() {
     isBreaking = false;
     clearInterval(timerInterval);
     elapsedTime = 0;
@@ -151,7 +178,7 @@ startButton.addEventListener('click', () => {
     } else if (!running && isResting) {
         stopRest();
     } else if (!running && isBreaking) {
-        stopLongBreak();
+        stopBreak();
     }
 });
 
