@@ -28,7 +28,8 @@ function formatTime(seconds) {
                     // add a leading zero if single digit
     let formattedHours = hours < 10 ? `0${hours}` : hours; 
     let formattedMinutes = minutes < 10 ? `0${minutes}` : minutes; 
-    let formattedSeconds = remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds; 
+    let formattedSeconds = Math.floor(remainingSeconds); // Remove decimal part
+    formattedSeconds = formattedSeconds < 10 ? `0${formattedSeconds}` : formattedSeconds; // Add leading zero if needed
 
     return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`; 
 }
@@ -79,10 +80,10 @@ function updateDisplay() {
 }
 
 // EVENT LISTENERS (BUTTONS)
-document.getElementById("startButton").addEventListener("click", startTimer);
-document.getElementById("pauseButton").addEventListener("click", pauseTimer);
-document.getElementById("resumeButton").addEventListener("click", resumeTimer);
-document.getElementById("resetButton").addEventListener("click", resetTimer);
+document.querySelector("button[data-action='start']").addEventListener("click", startTimer);
+document.querySelector("button[data-action='pause']").addEventListener("click", pauseTimer);
+document.querySelector("button[data-action='resume']").addEventListener("click", resumeTimer);
+document.querySelector("button[data-action='reset']").addEventListener("click", resetTimer);
 
 // Initial display
 updateDisplay();
