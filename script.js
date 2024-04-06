@@ -1,7 +1,9 @@
 // script.js BreakBound 
 
-// Get the timer display element
 const timerDisplay = document.getElementById('timerDisplay');
+const startButton = document.getElementById('startButton');
+const stopButton = document.getElementById('stopButton');
+const resetButton = document.getElementById('resetButton');
 
 let timerInterval;
 let startTime;
@@ -30,15 +32,22 @@ function stopTimer() {
     }
 }
 
+function resetTimer() {
+    stopTimer();
+    elapsedTime = 0;
+    timerDisplay.textContent = formatTime(elapsedTime);
+}
+
 function updateTimer() {
     const currentTime = Date.now();
     elapsedTime = Math.floor((currentTime - startTime) / 1000);
     timerDisplay.textContent = formatTime(elapsedTime);
 }
 
-// Event listeners for the start and stop buttons
-document.getElementById('startButton').addEventListener('click', startTimer);
-document.getElementById('stopButton').addEventListener('click', stopTimer);
+startButton.addEventListener('click', startTimer);
+stopButton.addEventListener('click', stopTimer);
+resetButton.addEventListener('click', resetTimer);
+
 
 // FOOTER 
 document.addEventListener("DOMContentLoaded", function() {
