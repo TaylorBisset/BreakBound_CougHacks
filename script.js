@@ -46,6 +46,20 @@ function updateTimer() {
     const currentTime = Date.now();
     elapsedTime = Math.floor((currentTime - startTime) / 1000);
     timerDisplay.textContent = formatTime(elapsedTime);
+
+    if (elapsedTime === 20 * 60) {  // 20 minutes
+        triggerAlarm();
+        flashTabTitle();
+    }
+}
+
+function triggerAlarm() {
+    const alarmSound = new Audio('/TimerAlert.mp3'); 
+    alarmSound.play();
+}
+
+function flashTabTitle() {
+
 }
 
 startButton.addEventListener('click', startTimer);
